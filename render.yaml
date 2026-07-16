@@ -1,0 +1,28 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploy: connect this repo on Render and it will pick this file up automatically
+# (Render → New → Blueprint), or configure the service manually using these same values.
+#
+# NOTE: Render has no native "java" runtime for Blueprints — Java services must
+# deploy via Docker. ums-backend/Dockerfile (multi-stage Maven build -> slim JRE
+# runtime image) handles that; this Blueprint just points Render at it.
+services:
+  - type: web
+    name: ums-backend
+    runtime: docker
+    plan: free
+    rootDir: ums-backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        sync: false   # set manually to your managed MySQL JDBC URL
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false   # set to your deployed frontend URL after the frontend is live
