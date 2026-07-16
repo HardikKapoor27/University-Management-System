@@ -1,4 +1,4 @@
-# UMS — University Management System
+# AlmaUMS — University Management System
 
 A full-stack University Management System with role-based dashboards for **Admins**, **Faculty**, **Students**, and **Accounts** staff — covering academics, attendance, exams, assignments, auto-graded MCQ tests, fee management and campus communication in one connected application.
 
@@ -233,6 +233,13 @@ All protected endpoints expect `Authorization: Bearer <jwt>`.
 
 ## Deploying
 
-- **Backend**: any container host or PaaS that runs a Spring Boot jar (Railway, Render, Fly.io, EC2, etc.) plus a managed MySQL instance. Set `DATABASE_URL`, `DB_USER`, `DB_PASS`, `JWT_SECRET`, and `PORT` as environment variables; set `-Dspring.profiles.active=prod` to disable the `/dev` helper endpoints.
-- **Frontend**: `npm run build` and deploy the `dist/` folder to any static host (Vercel, Netlify, Cloudflare Pages, S3+CloudFront). Point it at your deployed backend by updating the API base URL / proxy configuration for production.
-- Update the CORS `allowedOriginPatterns` in `SecurityConfig` from `*` to your actual frontend origin before going live.
+This repo is set up to deploy as-is — no code changes needed, just environment variables:
+
+- **Backend**: any host that runs a Spring Boot jar (Render, Railway, Fly.io, EC2, etc.) plus a managed MySQL instance.
+  Env vars: `DATABASE_URL`, `DB_USER`, `DB_PASS`, `JWT_SECRET`, `PORT`, `SPRING_PROFILES_ACTIVE=prod`, and
+  `CORS_ALLOWED_ORIGINS` (comma-separated frontend URL(s) — defaults to `*` if unset). A `render.yaml`
+  blueprint is included at the repo root for one-click setup on Render.
+- **Frontend**: `npm run build` and deploy the `dist/` folder to any static host (Vercel, Netlify, Cloudflare Pages).
+  Set `VITE_API_BASE_URL` to your deployed backend's API root (see `ums-frontend/.env.example`) — locally this is
+  left unset and the Vite dev-server proxy handles it instead.
+- Once both are live, set `CORS_ALLOWED_ORIGINS` on the backend to your actual frontend URL and redeploy.
